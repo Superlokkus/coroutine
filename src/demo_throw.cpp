@@ -2,8 +2,14 @@
 
 #include <boost/asio.hpp>
 
-boost::asio::awaitable<void>  coroutine() {
-    std::cout << "Coroutine executes...\n";
+boost::asio::awaitable<void>  coroutine_detached() {
+    std::cout << "Coroutine executes detached\n";
+    throw std::runtime_error("Test throw from coroutine!");
+    co_return;
+}
+
+boost::asio::awaitable<void>  coroutine_with_rethrow_completion_handler() {
+    std::cout << "Coroutine executes with rethrow completion handler\n";
     throw std::runtime_error("Test throw from coroutine!");
     co_return;
 }
@@ -11,18 +17,14 @@ boost::asio::awaitable<void>  coroutine() {
 int main(int argc, char* argv[]) {
     boost::asio::io_context context;
 
-    boost::asio::co_spawn(context, coroutine(), boost::asio::detached);
-    boost::asio::co_spawn(context, coroutine(), [](std::exception_ptr ptr) {
+    boost::asio::co_spawn(context, coroutine_detached(), boost::asio::detached);
+    boost::asio::co_spawn(context, coroutine_with_rethrow_completion_handler(), [](std::exception_ptr ptr) {
         if (ptr) {
             std::cout << "Rethrowing in completion handler" << std::endl;
             std::rethrow_exception(ptr);
         } else {
             std::cout << "Completed without error" << std::endl;
         }
-    });
-
-    boost::asio::post(context, [] () {
-        throw std::runtime_error("Test throw from post!");
     });
 
     std::thread t([&context]() {

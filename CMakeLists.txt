@@ -4,38 +4,19 @@ include(${CMAKE_BINARY_DIR}/conan_paths.cmake) #Remove for conan agnostic build 
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
-find_package(Boost COMPONENTS REQUIRED)
+find_package(Boost REQUIRED)
 
-set(TEST_ENABLED TRUE CACHE BOOL "Tests are enabled")
-if (${TEST_ENABLED})
-    enable_testing()
-endif ()
+set(files
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/demo_throw.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/ub_lurking.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/completion_handlers.cpp
+)
+foreach (file ${files})
+    get_filename_component(Name ${file} NAME_WE)
+    add_executable(${Name} ${file})
+    set_property(TARGET ${Name} PROPERTY LINKER_LANGUAGE CXX)
+    set_property(TARGET ${Name} PROPERTY CXX_STANDARD 20)
+    target_link_libraries(${Name} PUBLIC Boost::boost)
 
-add_subdirectory(${PROJECT_SOURCE_DIR}/src/lib_name)
+endforeach ()
 
-add_executable(${PROJECT_NAME} src/demo_throw.cpp)
-
-set_property(TARGET ${PROJECT_NAME} PROPERTY LINKER_LANGUAGE CXX)
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
-
-target_link_libraries(${PROJECT_NAME} PUBLIC Boost::boost PRIVATE lib_name)
-
-if (${TEST_ENABLED})
-    find_package(Boost COMPONENTS system REQUIRED)
-    set(${PROJECT_NAME}_test_src
-            ${CMAKE_CURRENT_SOURCE_DIR}/test/general_tests.cpp
-    )
-    foreach (testSrc ${${PROJECT_NAME}_test_src})
-        get_filename_component(testName ${testSrc} NAME_WE)
-        add_executable(${PROJECT_NAME}_${testName} ${testSrc})
-        set_property(TARGET ${PROJECT_NAME}_${testName} PROPERTY CXX_STANDARD 20)
-        target_link_libraries(${PROJECT_NAME}_${testName} Boost::boost lib_name)
-        add_test(NAME ${PROJECT_NAME}_${testName} COMMAND ${PROJECT_NAME}_${testName} -m HRF -l warning --build_info)
-    endforeach (testSrc)
-endif ()
-
-install(TARGETS ${PROJECT_NAME}
-        RUNTIME
-        DESTINATION bin)
-
-include(CPack)
