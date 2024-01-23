@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 3.11)
 project(coroutine_demo VERSION 1.0)
+include(${CMAKE_BINARY_DIR}/conan_paths.cmake) #Remove for conan agnostic build (let me know how you got it done with conan2 to acutally include the asio headers)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
-#set(CMAKE_CXX_CLANG_TIDY clang-tidy -p)
+find_package(Boost COMPONENTS REQUIRED)
 
 set(TEST_ENABLED TRUE CACHE BOOL "Tests are enabled")
 if (${TEST_ENABLED})
@@ -12,12 +13,12 @@ endif ()
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/src/lib_name)
 
-add_executable(${PROJECT_NAME} src/main.cpp)
+add_executable(${PROJECT_NAME} src/demo_throw.cpp)
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY LINKER_LANGUAGE CXX)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE lib_name)
+target_link_libraries(${PROJECT_NAME} PUBLIC Boost::boost PRIVATE lib_name)
 
 if (${TEST_ENABLED})
     find_package(Boost COMPONENTS system REQUIRED)

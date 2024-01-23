@@ -14,7 +14,7 @@ set(${PROJECT_NAME}_implementation_files
 
 add_library(${PROJECT_NAME} ${${PROJECT_NAME}_implementation_files})
 set_property(TARGET ${PROJECT_NAME} PROPERTY LINKER_LANGUAGE CXX)
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
 
 target_include_directories(${PROJECT_NAME}
         PUBLIC
