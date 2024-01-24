@@ -25,17 +25,17 @@ private:
                 throw std::runtime_error(boost_error.message());
             }
             self->op_b();
+            self->timer_.expires_after(std::chrono::seconds{1});
+            self->timer_.async_wait([self = self->shared_from_this()] (const auto& boost_error){
+                if (boost_error) {
+                    throw std::runtime_error(boost_error.message());
+                }
+                self->op_a();
+            });
         });
     }
     void op_b() {
         std::cout << "op_b " << ++session_data_ << "\n";
-        timer_.expires_after(std::chrono::seconds{1});
-        timer_.async_wait([self = shared_from_this()] (const auto& boost_error){
-            if (boost_error) {
-                throw std::runtime_error(boost_error.message());
-            }
-            self->op_a();
-        });
     }
     boost::asio::io_context& context_;
     boost::asio::steady_timer timer_;
