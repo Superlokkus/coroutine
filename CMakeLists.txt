@@ -10,6 +10,8 @@ set(files
         ${CMAKE_CURRENT_SOURCE_DIR}/src/demo_throw.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/ub_lurking.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/completion_handlers.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/old_way.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/new_way.cpp
 )
 foreach (file ${files})
     get_filename_component(Name ${file} NAME_WE)
