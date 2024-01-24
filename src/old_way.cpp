@@ -10,6 +10,9 @@ struct connection : std::enable_shared_from_this<connection> {
     void start_loop(std::shared_ptr<connection> myself) {
         timer_.expires_after(std::chrono::seconds{1});
         timer_.async_wait([self = shared_from_this()] (const auto& boost_error){
+            if (boost_error) {
+                throw std::runtime_error(boost_error.message());
+            }
             self->op_a();
         });
     }
@@ -18,6 +21,9 @@ private:
         std::cout << "op_a " << ++session_data_ << "\n";
         timer_.expires_after(std::chrono::seconds{1});
         timer_.async_wait([self = shared_from_this()] (const auto& boost_error){
+            if (boost_error) {
+                throw std::runtime_error(boost_error.message());
+            }
             self->op_b();
         });
     }
@@ -25,6 +31,9 @@ private:
         std::cout << "op_b " << ++session_data_ << "\n";
         timer_.expires_after(std::chrono::seconds{1});
         timer_.async_wait([self = shared_from_this()] (const auto& boost_error){
+            if (boost_error) {
+                throw std::runtime_error(boost_error.message());
+            }
             self->op_a();
         });
     }
