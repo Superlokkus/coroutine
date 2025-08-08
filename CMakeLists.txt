@@ -1,6 +1,5 @@
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.30)
 project(coroutine_demo VERSION 1.0)
-include(${CMAKE_BINARY_DIR}/conan_paths.cmake) #Remove for conan agnostic build (let me know how you got it done with conan2 to acutally include the asio headers)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
